@@ -12,7 +12,7 @@ class Follow(models.Model):
 	"""	
 	user = models.ForeignKey(USER_MODEL)
 	object_id = models.PostiveIntegerField()
-	followed = generic.GenericForeignKey('content_type', 'object_id')
+	followed = models.GenericForeignKey()
 	date = models.DateTimeField(default=datetime.now())
 
 	def __unicode__(self):
@@ -22,16 +22,21 @@ class Follow(models.Model):
 		)
 
 
-
-
 class Action(models.Model):
 	"""
 	Actions performed by objects.
 	<actor> <verb> <target> <time>
 	"""
-	object_id = models.PostiveIntegerField()
-	actor = generic.GenericForeignKey('content_type', 'object_id')
-	target = generic.GenericForeignKey('content_type', 'object_id')
+	actor_object_id = models.PostiveIntegerField()
+	actor = generic.GenericForeignKey(
+		'content_type',
+		'actor_object_id'
+	)
+	target_object_id = models.PostiveIntegerField()
+	target = generic.GenericForeignKey(
+		'content_type',
+		'target_object_id'
+	)
 	verb = models.CharField(max_length=200)
 	date = models.DateTimeField(default=datetime.now())
 	
