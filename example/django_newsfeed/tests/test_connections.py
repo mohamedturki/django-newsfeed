@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .connections import follow, unfollow, is_following, followers, following
-from .models import Follow
+from ..connections import follow, unfollow, is_following, followers, following
+from ..models import Follow
 
 class ConnectionsTest(TestCase):
 
