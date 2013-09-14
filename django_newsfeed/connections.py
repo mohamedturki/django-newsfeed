@@ -6,11 +6,10 @@ def follow(user, followed):
 	"""
 		User follows an object.
 	"""
-
 	follow, create = Follow.objects.get_or_create(
 		user=user,
-		object_id=followed,
-		followed=ContentType.objects.get_for_model(followed)
+		object_id=followed.pk,
+		content_type=ContentType.objects.get_for_model(followed)
 	)
 
 def unfollow(user, followed):
@@ -23,7 +22,7 @@ def unfollow(user, followed):
 	Follow.objects.filter(
 		user=user,
 		object_id=followed.pk,
-		followed=ContentType.objects.get_for_model(followed)
+		content_type=ContentType.objects.get_for_model(followed)
 	).delete()
 
 
@@ -32,30 +31,28 @@ def is_following(user, followed):
 		Checks if the user is already following an object.
 	"""
 
-	return bool(Follow.objects.count(
+	return bool(Follow.objects.filter(
 		user=user,
 		object_id=followed.pk,
-		followed=ContentType.objects.get_for_model(followed)
-	))
+		content_type=ContentType.objects.get_for_model(followed)
+	).count())
 
 
 def followers(user):
 	"""
-		Returns a queryset of all the followers of a given
+		Returns a list of all the followers of a given
 		user.
 	"""
-
-	return Follow.objects.filter(
+	follows = Follow.objects.filter(
 		object_id=user.pk,
-		followed=ContentType.objects.get_for_model(user)
+		content_type=ContentType.objects.get_for_model(user)
 	)
+	return [follow.user for follow in follows]
 
 
 def following(user):
 	"""
 		Returns all the objects that `user` is following.
 	"""
-
-	return Follow.objects.filter(
-		user=user
-	)
+	follows = Follow.objects.filter(user=user)
+	return [follow.followed for follow in follows]
