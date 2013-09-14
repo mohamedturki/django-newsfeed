@@ -6,7 +6,6 @@ def follow(user, followed):
 	"""
 		User follows an object.
 	"""
-	print "following"
 	follow, create = Follow.objects.get_or_create(
 		user=user,
 		object_id=followed.pk,
@@ -41,14 +40,14 @@ def is_following(user, followed):
 
 def followers(user):
 	"""
-		Returns a queryset of all the followers of a given
+		Returns a list of all the followers of a given
 		user.
 	"""
-
-	return Follow.objects.filter(
+	follows = Follow.objects.filter(
 		object_id=user.pk,
 		content_type=ContentType.objects.get_for_model(user)
 	)
+	return [follow.user for follow in follows]
 
 
 def following(user):
