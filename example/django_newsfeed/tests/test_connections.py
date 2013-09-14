@@ -37,8 +37,8 @@ class ConnectionsTest(TestCase):
 
 	def test_followers(self):
 		follow(self.me, self.you)
-		self.assertIn(self.you, followers(self.me))
+		self.assertIn(self.me, followers(self.you))
 
 	def test_following(self):
 		follow(self.me, self.you)
-		self.assertIn(self.me, following(self.you))
+		self.assertIn(self.you, following(self.me))
