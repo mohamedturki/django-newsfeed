@@ -4,4 +4,4 @@ except ImportError:
     from django.contrib.auth.models import User
     get_user_model = lambda: User
 
-USER_MODEL = get_user_model
+USER_MODEL = get_user_model()

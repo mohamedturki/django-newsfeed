@@ -9,9 +9,9 @@ def create(actor, target, verb):
     """
     return Action.objects.create(
         actor_object_id=actor.pk,
-        actor=ContentType.objects.get_for_model(actor),
+        actor_content_type=ContentType.objects.get_for_model(actor),
         target_object_id=target.pk,
-        target=ContentType.objects.get_for_model(target),
+        target_content_type=ContentType.objects.get_for_model(target),
         verb=verb
     )
 
@@ -22,7 +22,7 @@ def get_newsfeed(user):
         that `user` is following.
     """
     return Action.objects.filter(
-    	actor__in=following(user)
+    	actor_object_id__in=[followed.pk for followed in following(user)]
     )
 
 
@@ -31,5 +31,5 @@ def get_activities(user):
         Returns all the activities of a user.
     """
     return Action.objects.filter(
-    	actor=ContentType.objects.get_for_model(user)
+    	actor_object_id=user.pk
     )
