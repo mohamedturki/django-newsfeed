@@ -38,13 +38,13 @@ def create(actor, target, verb, meta):
     # )
 
 
-def get_activities(user_id):
+def get_activities(user_id, end):
     """
         Returns all the activities of a user in a json dumps.
         TO REDIS:
         activities = redis.get('user.{0}.activities')
     """
-    return redis.lrange("user.{0}.activities".format(user_id), 0, -1)
+    return redis.lrange("user.{0}.activities".format(user_id), 0, end)
     # return Action.objects.filter(
     #     actor_object_id=user.pk
     # )
@@ -59,9 +59,18 @@ def get_newsfeed(user):
         feed = []
         for followed in followed:
             feed.append(redis.get('user.{0}.activities'))
-        sort_feed_somehow(feed)
+        sort_feed_by_timestamp(feed)
 
     """
-    return Action.objects.filter(
-    	actor_object_id__in=[followed.pk for followed in following(user)]
-    )
+    followeds = following(user)
+    feed = []
+    for followed in followeds:
+        feed.extend(redis.lrange('user.{0}.activities'.format(followed.id), 0, -1))
+
+    feed = [json.loads(item) for item in feed]
+    feed = sorted(feed, key=lambda k: k['timestamp']) 
+
+    return feed
+    # return Action.objects.filter(
+    # 	actor_object_id__in=[followed.pk for followed in following(user)]
+    # )
